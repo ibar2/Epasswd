@@ -1,0 +1,58 @@
+<nav class="navbar navbar-dark bg-dark  navbar-expand-sm fixed-top">
+    <a href= {% url 'home_page' %} class="navbar-brand mb-0 h1 ms-5 active">E-Passwd</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+      data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id='navbarNav'>
+      <ul class="navbar-nav mr-auto">
+        {% if request.user.is_authenticated %}
+        <li class="nav-item">
+          <a href={% url 'dashboard' %} class="nav-link ">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a href={% url 'addpass' %} class="nav-link ">Add password</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a href={% url 'generator' %} class="nav-link ">Passwd Generator</a>
+        </li>
+        <li class="nav-item ">
+          <a href={% url 'password_checking' %} class="nav-link ">Passwd StrongChecker</a>
+        </li>
+      </ul>
+
+
+      {% if request.user.is_authenticated %}
+        <div class="dropdown ms-auto" style='font-weight:900; margin-right:110px;'>
+          <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ request.user.username }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown" style='color:white;'>
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            <a class="dropdown-item" href="">Settings</a>
+          </div>
+        </div>
+      {% else %}
+      <ul class="navbar-nav ms-auto me-5">
+        <li class="nav-item active">
+          <a href="{% url 'login' %}" class="nav-link" style="transition: background-color 0.3s ease-out;"
+            :hover {
+              background-color: #343a40;
+              color: #fff;
+            }
+          >Login</a>
+        </li>
+        <li class="nav-item active">
+          <a href= {% url 'signup' %} class="nav-link" style="transition: background-color 0.3s ease-out;"
+            :hover {
+              background-color: #343a40;
+              color: #fff;
+            }
+          >SignUp</a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>
