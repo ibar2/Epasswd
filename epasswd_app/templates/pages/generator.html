@@ -1,0 +1,103 @@
+{% extends 'base/base.html' %}
+{% block body %}
+<style>
+  .container {
+    max-width: 800px;
+  }
+
+  .card {
+    border-radius: 20px;
+  }
+
+  .card-title {
+    margin-bottom: 0;
+  }
+
+  .input-group {
+    margin-bottom: 1rem;
+  }
+
+  .password-output {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .copy-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .generate-btn {
+    border-radius: 20px;
+  }
+
+  @media only screen and (max-width: 576px) {
+    .card {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    #nonesense {
+      display: none;
+    }
+  }
+  .mtttt{
+    margin-top:100px;
+  }
+</style>
+<div class="container mt-5">
+  <div class="row justify-content-center mtttt">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Password Generator</h5>
+          <div class="input-group mb-3">
+            <!-- Password output container -->
+            <div class="input-group-prepend">
+              <!-- <span class="input-group-text bg-secondary text-white" id="nonesense">Password</span> -->
+            </div>
+            <input type="text" class="form-control password-output" value="Click on Generate" disabled>
+            <!-- Copy button -->
+            <div class="input-group-append">
+              <button class="btn btn-dark copy-btn" type="button" onclick="copyToClipboard()">Copy</button>
+            </div>
+          </div>
+          <!-- Generate button -->
+          <button class="btn btn-primary btn-block generate-btn mt-4">Generate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <script>
+    const generateBtn = document.querySelector('.generate-btn');
+    const passwordOutput = document.querySelector('.password-output');
+    const copyBtn = document.querySelector('.copy-btn');
+
+    generateBtn.addEventListener('click', () => {
+    fetch('/generate/').then(response => response.json()).then(data =>{
+      passwordOutput.value = data.password;
+    })
+    }
+      );
+
+function copyToClipboard() {
+  // Copy password output
+  const passwordOutputValue = passwordOutput.value;
+  const passwordOutputCopy = document.createElement("textarea");
+  passwordOutputCopy.value = passwordOutputValue;
+  document.body.appendChild(passwordOutputCopy);
+  passwordOutputCopy.select();
+  document.execCommand("copy");
+  document.body.removeChild(passwordOutputCopy);
+
+  // Change copy button text to "Copied" for 2 seconds
+  const initialText = "Copy";
+  copyBtn.innerText = "Copied";
+  setTimeout(() => {
+    copyBtn.innerText = initialText;
+  }, 2000);
+}
+  </script>
+  {% endblock body %}

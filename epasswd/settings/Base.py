@@ -84,10 +84,24 @@ WSGI_APPLICATION = "epasswd.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "Databases" / "db.sqlite3",
+        "NAME": BASE_DIR / "Databases" / "default.sqlite3",
+    },
+    "db1": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "Databases" / "db1.db..sqlite3",
+    },
+    "db2": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "Databases" / "db2.db.sqlite3",
     }
 }
 
+# database routers settings
+DATABASE_ROUTERS = ['epasswd.Routers.database_routers.auth', 'epasswd.Routers.database_routers.routemodel']
+
+
+# Authentication User Model
+AUTH_USER_MODEL = 'epasswd_app.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
