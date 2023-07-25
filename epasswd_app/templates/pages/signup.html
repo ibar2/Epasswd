@@ -43,7 +43,7 @@
                                 <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail
                                     Address</label>
                                 <div class="col-md-6">
-                                    <input type="email" id="email_address" class="form-control" name="email"
+                                    <input type="email" id="email" class="form-control" name="email"
                                         required autofocus>
                                 </div>
                             </div>
@@ -69,27 +69,39 @@
                                     Forgot Your Password?
                                 </a>
                             </div>
+                        </form>
                     </div>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
 </main>
 
-
 <script>
     function validateForm() {
+        var email = document.getElementById("email").value;
         var password = document.getElementById("password").value;
         var repeatPassword = document.getElementById("password2").value;
 
+        // Email validation
+        if (!validateEmail(email)) {
+            alert("Please enter a valid email address.");
+            return false; // Prevent form submission
+        }
+
+        // Password validation
         if (password !== repeatPassword) {
             alert("Password and Repeat Password must match.");
             return false; // Prevent form submission
         }
-        else {
-            return true; // Allow form submission
-        }
+
+        return true; // Allow form submission
+    }
+
+    function validateEmail(email) {
+        // Regular expression for email validation
+        var regex = /^[^\s@]+@[^\s@]+\.[^\s@][^\s@]+$/;
+        return regex.test(email);
     }
 </script>
 {% endblock body %}
