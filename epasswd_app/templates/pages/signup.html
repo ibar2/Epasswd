@@ -1,113 +1,103 @@
 {% extends 'base/base.html' %}
 
 {% block body %}
-<style>
+  <style>
     .my-form {
-        margin-top: 500px;
-        padding-bottom: 1.5rem;
+      margin-top: 500px;
+      padding-bottom: 1.5rem;
     }
-
+    
     .my-form .row {
-        margin-left: 0;
-        margin-right: 0;
+      margin-left: 0;
+      margin-right: 0;
     }
-
+    
     .login-form {
-        margin-top: 100px;
-        padding-top: 1.5rem;
-        padding-bottom: 1.5rem;
+      margin-top: 100px;
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
     }
-
+    
     .login-form .row {
-        margin-left: 0;
-        margin-right: 0;
+      margin-left: 0;
+      margin-right: 0;
     }
-</style>
+  </style>
 
-
-<main class="login-form">
+  <main class="login-form">
     <div class="cotainer">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">SignUp Page</div>
-                    <div class="card-body">
-                        <form action="" method="post" onsubmit="return validateForm()">
-                            {% csrf_token %}
-                            <div class="form-group row">
-                                <label for="email_address"
-                                    class="col-md-4 col-form-label text-md-right">User-Name</label>
-                                <div class="col-md-6">
-                                    <input type="text" id="email_address" class="form-control" name="username" required
-                                        autofocus>
-                                </div>
-                            </div>
-                            <div class="form-group row mt-4">
-                                <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail
-                                    Address</label>
-                                <div class="col-md-6">
-                                    <input type="email" id="email" class="form-control" name="email" required autofocus>
-                                </div>
-                            </div>
-
-                            <div class="form-group row mt-3">
-                                <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
-                                <div class="col-md-6">
-                                    <input type="password" id="password" class="form-control" name="password" required>
-                                </div>
-                            </div>
-                            <div class="form-group row mt-3">
-                                <label for="password2" class="col-md-4 col-form-label text-md-right">Repeat
-                                    Password</label>
-                                <div class="col-md-6">
-                                    <input type="password" id="password2" class="form-control" name="password2"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="col-md-6 offset-md-4 mt-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Signup
-                                </button>
-                                <a href="#" class="btn btn-link">
-                                    Forgot Your Password?
-                                </a>
-                            </div>
-                        </form>
-                    </div>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">SignUp Page</div>
+            <div class="card-body">
+              <form action="" method="post" onsubmit="return validateForm()">
+                {% csrf_token %}
+                <div class="form-group row">
+                  <label for="email_address" class="col-md-4 col-form-label text-md-right">User-Name</label>
+                  <div class="col-md-6">
+                    <input type="text" id="email_address" class="form-control" name="username" required autofocus />
+                  </div>
                 </div>
+                <div class="form-group row mt-4">
+                  <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
+                  <div class="col-md-6">
+                    <input type="email" id="email" class="form-control" name="email" required autofocus />
+                  </div>
+                </div>
+
+                <div class="form-group row mt-3">
+                  <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+                  <div class="col-md-6">
+                    <input type="password" id="password" class="form-control" name="password" required />
+                  </div>
+                </div>
+                <div class="form-group row mt-3">
+                  <label for="password2" class="col-md-4 col-form-label text-md-right">Repeat Password</label>
+                  <div class="col-md-6">
+                    <input type="password" id="password2" class="form-control" name="password2" required />
+                  </div>
+                </div>
+                <div class="col-md-6 offset-md-4 mt-4">
+                  <button type="submit" class="btn btn-primary">Signup</button>
+                  <a href="#" class="btn btn-link">Forgot Your Password?</a>
+                </div>
+              </form>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</main>
+  </main>
 
-<script>
+  <script>
     function validateForm() {
-        var email = document.getElementById("email").value;
-        var password = document.getElementById("password").value;
-        var repeatPassword = document.getElementById("password2").value;
-
-        // Email validation
-        if (!validateEmail(email)) {
-            alert("Please enter a valid email address.");
-            return false; // Prevent form submission
-        }
-
-        // Password validation
-        if (password !== repeatPassword) {
-            alert("Password and Repeat Password must match.");
-            return false; // Prevent form submission
-        }
-        if(password.length <= 8 ){
-            alert("please enter a more than 8 character long password")
-            return false
-        }
-        return true; // Allow form submission
+      var email = document.getElementById('email').value
+      var password = document.getElementById('password').value
+      var repeatPassword = document.getElementById('password2').value
+    
+      // Email validation
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.')
+        return false // Prevent form submission
+      }
+    
+      // Password validation
+      if (password !== repeatPassword) {
+        alert('Password and Repeat Password must match.')
+        return false // Prevent form submission
+      }
+      if (password.length <= 8) {
+        alert('please enter a more than 8 character long password')
+        return false
+      }
+      return true // Allow form submission
     }
-
+    
     function validateEmail(email) {
-        // Regular expression for email validation
-        var regex = /^[^\s@]+@[^\s@]+\.[^\s@][^\s@]+$/;
-        return regex.test(email);
+      // Regular expression for email validation
+      var regex = /^[^\s@]+@[^\s@]+\.[^\s@][^\s@]+$/
+      return regex.test(email)
     }
-</script>
-{% endblock body %}
+  </script>
+{% endblock %}

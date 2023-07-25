@@ -3,7 +3,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from . import forms, models
 from hashlib import sha1
 import secrets
-# import requests
+import requests
 from django.contrib.auth import login, authenticate, logout
 
 
@@ -27,7 +27,35 @@ def generate(request):
 
 def passwordchecking(request):
     # password strength checker
-    return HttpResponse('.....')
+    if request.method == 'POST':
+        password = request.POST.get('password', None)
+        hsh = sha1(password.encode())
+        hashed = hsh.hexdigest()
+        res = requests.get(f'https://api.pwnedpasswords.com/range/{hashed[:5]}')
+        if res.status_code == 200:
+            for line in res.content.decode().splitlines():
+                hash, count = line.split(":")
+                if str(hash) in str(hashed).upper():
+                    return JsonResponse({'result': 'this password is pwned'.upper(),
+                                         'coloring': 'color: red'})
+        # Check password strength criteria
+        length_ok = len(password) >= 8
+        uppercase_ok = any(c.isupper() for c in password)
+        lowercase_ok = any(c.islower() for c in password)
+        digits_ok = any(c.isdigit() for c in password)
+        symbols_ok = any(
+            c in '!@#$%^&*()_+-=[]{}|\\;\':",./<>?' for c in password)
+
+        if length_ok and uppercase_ok and lowercase_ok and digits_ok and symbols_ok:
+            response_data = {'result': 'this is Strong password'.upper(),
+                             'coloring': 'color: blue'}
+        else:
+            response_data = {'result': 'This is a Very weak password'.upper(),
+                             'coloring': 'color: red'}
+
+        return JsonResponse(response_data)
+
+    return render(request, 'pages/password_strength_checker.html')
 
 
 def SavePassword(request):
