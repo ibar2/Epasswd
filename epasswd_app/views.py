@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseBadRequest
 from . import forms, models
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 
 
 def home(request):
@@ -30,6 +30,8 @@ def dashboard(request):
 
 def signup(request):
     # create new users
+    if request.user.is_authenticated:
+        redirect('/logout')
     if request.method == 'POST':
         username = request.POST['username']
         email = request.POST['email']
@@ -54,7 +56,18 @@ def signup(request):
 
 def signin(request):
     # login existing users
-    return HttpResponse('loged')
+    if request.method == 'POST':
+        user = authenticate(
+            username=request.POST['username'], password=request.POST['password'])
+        username44 = request.POST['username']
+        if user is not None:
+            login(request, user)
+            return redirect('/dashboard')
+        else:
+            return render(request, 'pages/signin.html', {'notfoound': True,
+                                                         'usernameff': username44})
+
+    return render(request, 'pages/signin.html')
 
 
 def logout(request):
