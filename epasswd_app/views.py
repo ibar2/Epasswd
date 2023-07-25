@@ -32,4 +32,4 @@ def login(request):
 
 def signup(request):
     # create new users
-    return HttpResponse('created')
+    return render(request, 'page/signup.html')
