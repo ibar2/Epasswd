@@ -2,6 +2,11 @@
 
 {% block body %}
 
-<h1> hello to home page <h1>
-
+<main class="d-flex justify-content-center align-items-center" style="height: 100vh; background-color: #f2f2f2; padding-top: 50px;">
+    <div class="container mx-auto py-5 text-center" style="max-width: 600px, ">
+        <h1 class="mb-4" style="font-size: 3rem;">Welcome to Epasswd</h1>
+        <p class="lead mb-5" style="font-size: 1.5rem;"> Securely store your passwords with ease.</p>
+        <button class="btn btn-lg btn-primary" style="font-size: 1.2rem;"><a href= {% url 'signup' %} style='text-decoration:none; color:white;'>Start Using it Today</a></button>
+    </div>
+</main>
 {% endblock body %}

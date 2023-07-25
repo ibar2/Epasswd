@@ -1,7 +1,10 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from . import forms, models
-from django.contrib.auth import login, authenticate
+from hashlib import sha1
+import secrets
+# import requests
+from django.contrib.auth import login, authenticate, logout
 
 
 def home(request):
@@ -9,8 +12,17 @@ def home(request):
 
 
 def generator(request):
-    # generating staff
-    return HttpResponse('under construction')
+    # return the page
+    return render(request, 'pages/generator.html')
+
+
+def generate(request):
+    # generates the password
+    v = [secrets.choice("abcdefghijklmnopqrstuvwxyz-@#$&^!\
+0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ?_*,;")
+         for _ in range(12)]
+    v[secrets.choice(range(12))] = secrets.choice('1,2,3,4,5,6,7,8,9')
+    return JsonResponse({'password': "".join(v)})
 
 
 def passwordchecking(request):
@@ -31,7 +43,8 @@ def dashboard(request):
 def signup(request):
     # create new users
     if request.user.is_authenticated:
-        redirect('/logout')
+        logout(request)
+        return redirect('/signup')
     if request.method == 'POST':
         username = request.POST['username']
         email = request.POST['email']
@@ -57,6 +70,8 @@ def signup(request):
 def signin(request):
     # login existing users
     if request.method == 'POST':
+        if request.user.is_authenticated:
+            logout(request)
         user = authenticate(
             username=request.POST['username'], password=request.POST['password'])
         username44 = request.POST['username']
@@ -70,5 +85,8 @@ def signin(request):
     return render(request, 'pages/signin.html')
 
 
-def logout(request):
-    return HttpResponse('logout')
+def signout(request):
+    if request.user.is_authenticated:
+        logout(request)
+        return redirect('/')
+    return redirect('/')
