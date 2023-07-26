@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, JsonResponse
 from . import forms, models
 from hashlib import sha1
@@ -60,13 +60,15 @@ def passwordchecking(request):
 
 def SavePassword(request):
     # saving passwords
-    return HttpResponse('under construction')
+    return render(request, 'pages/savepasswords.html')
 
 
 def dashboard(request):
     # dashboard
-    return HttpResponse('Dashboard loading.....')
+    if request.user.is_authenticated:
 
+        return render(request, 'pages/dashboard.html')
+    return redirect('/signin')
 
 def signup(request):
     # create new users
@@ -117,4 +119,8 @@ def signout(request):
     if request.user.is_authenticated:
         logout(request)
         return redirect('/')
+    return redirect('/')
+
+
+def getval(request):
     return redirect('/')
