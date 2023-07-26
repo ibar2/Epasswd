@@ -4,6 +4,7 @@ from . import forms, models, Hashers
 from hashlib import sha1
 import secrets
 import requests
+import os
 from django.contrib.auth import login, authenticate, logout
 
 
@@ -90,6 +91,11 @@ def signup(request):
                     password=password
                 )
                 user.save()
+                # generating and storing encryption key at the signup of the user
+                key = os.urandom(16)
+                user_encryption_key = models.hashers.objects.create(userpk=request.user.pk,
+                                                                    key=key)
+                user_encryption_key.save()
                 login(request, user)
                 return redirect('/dashboard')
             return HttpResponseBadRequest('please check if you  provided the correct\
