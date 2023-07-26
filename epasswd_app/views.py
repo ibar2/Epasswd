@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, JsonResponse
-from . import forms, models
+from . import forms, models, Hashers
 from hashlib import sha1
 import secrets
 import requests

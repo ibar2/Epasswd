@@ -36,3 +36,14 @@ class partialpass(models.Model):
     partof = models.IntegerField()
     partial = models.BinaryField()
     owner = models.IntegerField(default=None)
+
+
+class hashers(models.Model):
+    """
+    stores a ecryption key for the user
+    1 encryption key for 1 user
+    and hashers model and users may not be saved in the same database
+    """
+
+    userpk = models.IntegerField()
+    key = models.BinaryField()
