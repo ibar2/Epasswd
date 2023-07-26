@@ -1,11 +1,22 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, JsonResponse
-from . import forms, models, Hashers
+from . import forms, models
 from hashlib import sha1
+from .Hashers import hasher
+from django.contrib.auth import login, authenticate, logout
 import secrets
 import requests
 import os
-from django.contrib.auth import login, authenticate, logout
+
+
+# helper function for the save password
+def split_string(string):
+    if len(string) % 2 == 0:
+        middle = len(string) // 2
+        return string[:middle], string[middle:]
+    else:
+        middle = len(string) // 2
+        return string[:middle], string[middle:]
 
 
 def home(request):
@@ -62,7 +73,26 @@ def passwordchecking(request):
 
 def SavePassword(request):
     # saving passwords
-    return render(request, 'pages/savepasswords.html')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            name = request.POST['name']
+            passwd = request.POST['pass']
+            getkey = models.hashers.objects.get(userpk=request.user.pk).key
+            encryptedata, tag, nonce = hasher.encrypt(getkey, passwd)
+            part1, part2 = split_string(encryptedata)
+            mod = models.passwords.objects.create(
+                owner=request.user.pk, name=name, passwd=part1, tag=tag, nonce=nonce)
+            mod.save()
+            partialmodel = models.partialpass.objects.create(
+                partof=mod.pk, partial=part2, owner=request.user.pk)
+            partialmodel.save()
+        passmodel = models.passwords.objects.filter(owner=request.user.pk)
+        names = {}
+        for passobject in passmodel:
+            names[passobject.name] = None
+        return render(request, 'pages/savepasswords.html', {'passwords': names})
+    else:
+        return redirect('/login')
 
 
 def dashboard(request):
