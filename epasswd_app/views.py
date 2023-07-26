@@ -31,6 +31,7 @@ def passwordchecking(request):
         password = request.POST.get('password', None)
         hsh = sha1(password.encode())
         hashed = hsh.hexdigest()
+        # api request to haveibeenpwned to check if the password is pwned
         res = requests.get(f'https://api.pwnedpasswords.com/range/{hashed[:5]}')
         if res.status_code == 200:
             for line in res.content.decode().splitlines():
@@ -66,9 +67,9 @@ def SavePassword(request):
 def dashboard(request):
     # dashboard
     if request.user.is_authenticated:
-
         return render(request, 'pages/dashboard.html')
     return redirect('/signin')
+
 
 def signup(request):
     # create new users
