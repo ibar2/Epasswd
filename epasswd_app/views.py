@@ -93,7 +93,7 @@ def signup(request):
                 user.save()
                 # generating and storing encryption key at the signup of the user
                 key = os.urandom(16)
-                user_encryption_key = models.hashers.objects.create(userpk=request.user.pk,
+                user_encryption_key = models.hashers.objects.create(userpk=user.pk,
                                                                     key=key)
                 user_encryption_key.save()
                 login(request, user)
