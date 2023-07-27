@@ -92,13 +92,22 @@ def SavePassword(request):
             names[passobject.name] = None
         return render(request, 'pages/savepasswords.html', {'passwords': names})
     else:
-        return redirect('/login')
+        return redirect('/signin')
 
 
 def dashboard(request):
     # dashboard
     if request.user.is_authenticated:
-        return render(request, 'pages/dashboard.html')
+        part1 = models.passwords.objects.filter(
+            owner=request.user.pk)
+        if request.GET.get('q', False):
+            part1 = part1.filter(name__contains=request.GET.get('q'))
+        texts = {}
+        idforv = 0
+        for p1 in part1:
+            texts[p1.name] = idforv
+            idforv += 1
+        return render(request, 'pages/dashboard.html', {'passwords': texts})
     return redirect('/signin')
 
 
@@ -160,4 +169,46 @@ def signout(request):
 
 
 def getval(request):
-    return redirect('/')
+    if request.user.is_authenticated:
+        name = request.GET.get('val', False)
+        if name:
+            getkey = models.hashers.objects.get(userpk=request.user.pk).key
+            p1 = models.passwords.objects.get(name=name)
+            p2 = models.partialpass.objects.get(partof=p1.pk)
+            data = p1.passwd + p2.partial
+            decrypt = hasher.decrypt(getkey, data, p1.tag, p1.nonce)
+            return JsonResponse({'val': decrypt.decode()})
+        else:
+            return JsonResponse({'val': 'not exists'})
+
+    else:
+        return redirect('/sigin')
+
+
+def settings(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            wrongpassword = False
+            didnotmatch = False
+            current = request.POST['currentpass']
+            newpassword = request.POST['newpassword']
+            newpassword2 = request.POST['newpassword2']
+            if newpassword == newpassword2:
+                print(request.user.username)
+                user = models.User.objects.get(username=request.user.username)
+                if user.check_password(current):
+                    user.set_password(newpassword)
+                    user.save()
+                    redirect('/signin')
+                else:
+                    wrongpassword = True
+            else:
+                didnotmatch = True
+
+            return render(request, 'pages/settings.html', {
+                'wrong': wrongpassword,
+                'didnotmatch': didnotmatch
+            })
+        return render(request, 'pages/settings.html')
+
+    return redirect('/signin')

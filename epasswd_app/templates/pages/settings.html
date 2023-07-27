@@ -1,0 +1,109 @@
+{% extends 'base/base.html' %}
+{% block body %}
+<style>
+  .container {
+    max-width: 800px;
+  }
+
+  .card {
+    border-radius: 20px;
+  }
+
+  .card-title {
+    margin-bottom: 0;
+  }
+
+  .input-group {
+    margin-bottom: 1rem;
+  }
+
+  .password-output {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .copy-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .generate-btn {
+    border-radius: 20px;
+  }
+
+  @media only screen and (max-width: 576px) {
+    .card {
+      margin-top: 2rem; 
+      margin-bottom: 2rem;
+    }
+
+  }
+  .mtttt{
+    margin-top:100px;
+  }
+  input[type=password], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+</style>
+<div class="container mt-5">
+  <div class="row justify-content-center mtttt">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title" style='margin-bottom:9px'>Settings</h5>
+          <form action="" method='POST' onsubmit="return validateForm()">
+            {% csrf_token %}
+          <div class="input-group mb-3">
+            <input type="password" class="input-group input-group-sm" id='currentpass' name='currentpass' placeholder="current password" required>
+            {% if wrong %} 
+            <p style='color:red;'> Wrong password </p>
+            {% endif %}
+            <input type="password" class="input-group input-group-sm" id='newpassword' name='newpassword' style='display:block; ' placeholder="New password" required>
+            <input type="password" class="input-group input-group-sm" id='newpassword2' name='newpassword2' style='display:block; ' placeholder="New password" required>
+            {% if didnotmatch %} 
+            <p style='color:red;'> the password doesn't match </p>
+            {% endif %}
+            </div>
+          <!-- Generate button -->
+          <button class="btn btn-primary btn-block generate-btn">Change Master password</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+  <script>
+    function validateForm() {
+      var currentpass = document.getElementById('currentpass').value
+      var password = document.getElementById('newpassword').value
+      var repeatPassword = document.getElementById('newpassword2').value
+      
+      // Password validation
+      if (currentpass.length <= 8) {
+        alert('please enter a more than 8 character long password in the current')
+        return false
+      }
+      
+      if (password !== repeatPassword) {
+        alert('Password and Repeat Password must match.')
+        return false // Prevent form submission
+      }
+      
+      if (password.length <= 8){
+          alert('new password must be more than 8 charrecter')
+          return flase
+        }
+        
+        return true // Allow form submission
+    }
+  </script>
+
+  {% endblock body %}
