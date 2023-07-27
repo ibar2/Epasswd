@@ -1,10 +1,22 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, JsonResponse
 from . import forms, models
 from hashlib import sha1
+from .Hashers import hasher
+from django.contrib.auth import login, authenticate, logout
 import secrets
 import requests
-from django.contrib.auth import login, authenticate, logout
+import os
+
+
+# helper function for the save password
+def split_string(string):
+    if len(string) % 2 == 0:
+        middle = len(string) // 2
+        return string[:middle], string[middle:]
+    else:
+        middle = len(string) // 2
+        return string[:middle], string[middle:]
 
 
 def home(request):
@@ -31,6 +43,7 @@ def passwordchecking(request):
         password = request.POST.get('password', None)
         hsh = sha1(password.encode())
         hashed = hsh.hexdigest()
+        # api request to haveibeenpwned to check if the password is pwned
         res = requests.get(f'https://api.pwnedpasswords.com/range/{hashed[:5]}')
         if res.status_code == 200:
             for line in res.content.decode().splitlines():
@@ -60,12 +73,42 @@ def passwordchecking(request):
 
 def SavePassword(request):
     # saving passwords
-    return HttpResponse('under construction')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            name = request.POST['name']
+            passwd = request.POST['pass']
+            getkey = models.hashers.objects.get(userpk=request.user.pk).key
+            encryptedata, tag, nonce = hasher.encrypt(getkey, passwd)
+            part1, part2 = split_string(encryptedata)
+            mod = models.passwords.objects.create(
+                owner=request.user.pk, name=name, passwd=part1, tag=tag, nonce=nonce)
+            mod.save()
+            partialmodel = models.partialpass.objects.create(
+                partof=mod.pk, partial=part2, owner=request.user.pk)
+            partialmodel.save()
+        passmodel = models.passwords.objects.filter(owner=request.user.pk)
+        names = {}
+        for passobject in passmodel:
+            names[passobject.name] = None
+        return render(request, 'pages/savepasswords.html', {'passwords': names})
+    else:
+        return redirect('/signin')
 
 
 def dashboard(request):
     # dashboard
-    return HttpResponse('Dashboard loading.....')
+    if request.user.is_authenticated:
+        part1 = models.passwords.objects.filter(
+            owner=request.user.pk)
+        if request.GET.get('q', False):
+            part1 = part1.filter(name__contains=request.GET.get('q'))
+        texts = {}
+        idforv = 0
+        for p1 in part1:
+            texts[p1.name] = idforv
+            idforv += 1
+        return render(request, 'pages/dashboard.html', {'passwords': texts})
+    return redirect('/signin')
 
 
 def signup(request):
@@ -87,6 +130,11 @@ def signup(request):
                     password=password
                 )
                 user.save()
+                # generating and storing encryption key at the signup of the user
+                key = os.urandom(16)
+                user_encryption_key = models.hashers.objects.create(userpk=user.pk,
+                                                                    key=key)
+                user_encryption_key.save()
                 login(request, user)
                 return redirect('/dashboard')
             return HttpResponseBadRequest('please check if you  provided the correct\
@@ -118,3 +166,49 @@ def signout(request):
         logout(request)
         return redirect('/')
     return redirect('/')
+
+
+def getval(request):
+    if request.user.is_authenticated:
+        name = request.GET.get('val', False)
+        if name:
+            getkey = models.hashers.objects.get(userpk=request.user.pk).key
+            p1 = models.passwords.objects.get(name=name)
+            p2 = models.partialpass.objects.get(partof=p1.pk)
+            data = p1.passwd + p2.partial
+            decrypt = hasher.decrypt(getkey, data, p1.tag, p1.nonce)
+            return JsonResponse({'val': decrypt.decode()})
+        else:
+            return JsonResponse({'val': 'not exists'})
+
+    else:
+        return redirect('/sigin')
+
+
+def settings(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            wrongpassword = False
+            didnotmatch = False
+            current = request.POST['currentpass']
+            newpassword = request.POST['newpassword']
+            newpassword2 = request.POST['newpassword2']
+            if newpassword == newpassword2:
+                print(request.user.username)
+                user = models.User.objects.get(username=request.user.username)
+                if user.check_password(current):
+                    user.set_password(newpassword)
+                    user.save()
+                    redirect('/signin')
+                else:
+                    wrongpassword = True
+            else:
+                didnotmatch = True
+
+            return render(request, 'pages/settings.html', {
+                'wrong': wrongpassword,
+                'didnotmatch': didnotmatch
+            })
+        return render(request, 'pages/settings.html')
+
+    return redirect('/signin')

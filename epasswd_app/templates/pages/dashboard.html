@@ -1,0 +1,117 @@
+{% extends 'base/base.html' %}
+{% block body %}
+<style>
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 50vw;
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even){background-color: #f2f2f2}
+  
+  .input {
+  
+  margin-bottom : 20px;
+  margin-left : 30px;
+  outline:none;
+  
+  }
+  .btn{
+    border : 1px solid black; 
+  }
+  .btn:hover {
+    background-color: #75C2F6;
+  }
+  body {
+    display : flex;
+    justify-content: center;
+    align-items:center;
+  }
+  form {
+    display:inline;
+  }
+  table td + td { border-left:2px solid red; }
+  @media only screen and (max-width: 600px) {
+    table {
+        width:95vw;
+        margin-left: 8px;
+    }
+  form {
+    display: block;
+  }
+  input {
+    display:block;
+    margin-left:10px !important;
+    margin-top:20px !important;
+    border: 1px solid black;
+  }
+  .btn {
+    margin-left: 10px;
+  }
+}
+  
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <div style='width:700px; margin-top:30px; margin-bottom: 80px;'>
+    <a href="{% url 'addpass' %}" style='text-decoration:none;'><button type='button' class='btn'>Add a password</button></a>
+    <form action='' method='GET'>
+      <input type="search" placeholder="Search by Name" id="search-input" class="input" name='q' value='{{ request.GET.q }}'>
+    </form>
+    <div >
+      <table style="table-layout: fixed;">    
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Password</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for k, v in passwords.items %}
+          <tr>
+            <td style='word-wrap: break-word;'>{{ k }}</td>
+            <td style='word-wrap: break-word;'>
+              <span class='c{{v}}'>########</span>
+              <a style="text-decoration: none; color:red;" class='showing' href='#' custval='{{k}}' idtwo={{v}}>Show</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+     <table>
+    </div>
+  </div>
+
+   <script>
+    $(document).ready(function() {
+      $('.showing').on('click', function(e) {
+        e.preventDefault();
+        var buttonText = $(this).text();
+        var custval = $(this).attr("custval");
+        var spandka = document.querySelector('.c' + $(this).attr('idtwo'))
+        if (buttonText === 'Show') {
+          $.ajax({
+            type: 'GET',
+            url: '{%url "getval"%}',
+            data: {'val': custval},
+            success: function(response) {
+              spandka.innerHTML = response.val
+            },
+            error: function(xhr, status, error) {
+              alert(error);
+            }
+          });
+          $(this).text('Hide');
+        } else if (buttonText === 'Hide') {
+          $(this).text('Show');
+          spandka.innerHTML = "########"
+        }
+      });
+    });
+  </script>
+{% endblock body %}
