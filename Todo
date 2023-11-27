@@ -1,0 +1,2 @@
+fix the csrf_token vailed at django4 when hosted // now running django v3.2.17 to avoid that
+add automatic forwarding to https from http in django setting // currenctly not doing anothing

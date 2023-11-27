@@ -97,7 +97,8 @@ DATABASES = {
 }
 
 # database routers settings
-DATABASE_ROUTERS = ['epasswd.Routers.database_routers.auth', 'epasswd.Routers.database_routers.routemodel']
+DATABASE_ROUTERS = ['epasswd.Routers.database_routers.auth',
+                    'epasswd.Routers.database_routers.routemodel']
 
 
 # Authentication User Model
@@ -133,12 +134,18 @@ USE_I18N = True
 
 USE_TZ = True
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+# deletion
+
+SESSION_COOKIE_AGE = 5 * 60
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATIC_ROOT = 'static'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

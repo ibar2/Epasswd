@@ -1,0 +1,109 @@
+{% extends 'base/base.html' %}
+{% block body %}
+<style>
+  .container {
+    max-width: 800px;
+  }
+
+  .card {
+    border-radius: 20px;
+  }
+
+  .card-title {
+    margin-bottom: 0;
+  }
+
+  .input-group {
+    margin-bottom: 1rem;
+  }
+
+  .password-output {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .copy-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .generate-btn {
+    border-radius: 20px;
+  }
+
+  @media only screen and (max-width: 576px) {
+    .card {
+      margin-top: 2rem; 
+      margin-bottom: 2rem;
+    }
+
+  }
+  .mtttt{
+    margin-top:100px;
+  }
+  input, select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+</style>
+<div class="container mt-5">
+  <div class="row justify-content-center mtttt">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title" style='margin-bottom:9px'>Futions</h5>
+          <form action="" method='POST'>
+            {% csrf_token %}
+          <div class="input-group mb-3">
+            <input type="text" class="input-group input-group-sm" id='currentpass' name='firstname' placeholder="first Name" required>
+            <input type="text" class="input-group input-group-sm" id='newpassword' name='lastname' style='display:block; ' placeholder="LastName" required>
+            <input type="text" class="input-group input-group-sm" id='newpassword2' name='country' style='display:block; ' placeholder="Country" required>
+            <input type="text" class="input-group input-group-sm" id='newpassword2' name='title' style='display:block; ' placeholder="Title" required>
+            <input type="number" class="input-group input-group-sm" id='newpassword2' name='phone' style='display:block; ' placeholder="Phone number" required>
+           
+            </div>
+            {% if initials %}
+            <p>{{initials}}</p>
+            {% endif %}
+          <!-- Generate button -->
+          <button class="btn btn-primary btn-block generate-btn">Generate</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+  {% comment %} <script>
+    function validateForm() {
+      var currentpass = document.getElementById('currentpass').value
+      var password = document.getElementById('newpassword').value
+      var repeatPassword = document.getElementById('newpassword2').value
+      
+      // Password validation
+      if (currentpass.length <= 8) {
+        alert('please enter a more than 8 character long password in the current')
+        return false
+      }
+      
+      if (password !== repeatPassword) {
+        alert('Password and Repeat Password must match.')
+        return false // Prevent form submission
+      }
+      
+      if (password.length <= 8){
+          alert('new password must be more than 8 charrecter')
+          return flase
+        }
+        
+        return true // Allow form submission
+    }
+  </script> {% endcomment %}
+
+  {% endblock body %}

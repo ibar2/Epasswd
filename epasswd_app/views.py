@@ -105,6 +105,7 @@ def dashboard(request):
         texts = {}
         idforv = 0
         for p1 in part1:
+            print(p1.name)
             texts[p1.name] = idforv
             idforv += 1
         return render(request, 'pages/dashboard.html', {'passwords': texts})
@@ -171,6 +172,7 @@ def signout(request):
 def getval(request):
     if request.user.is_authenticated:
         name = request.GET.get('val', False)
+        print(name)
         if name:
             getkey = models.hashers.objects.get(userpk=request.user.pk).key
             p1 = models.passwords.objects.get(name=name)
@@ -212,3 +214,38 @@ def settings(request):
         return render(request, 'pages/settings.html')
 
     return redirect('/signin')
+
+
+def handler404(request, exception):
+    return render(request, 'pages/404.html', status=404)
+
+
+def delete(request):
+    if request.user.is_authenticated:
+        name = request.GET.get('name')
+        if name:
+            p1 = models.passwords.objects.get(name=name)
+            p2 = models.partialpass.objects.get(partof=p1.pk)
+            p1.delete()
+            p2.delete()
+
+            return redirect('/dashboard')
+        else:
+            return JsonResponse({'val': 'not exists'})
+
+    else:
+        return redirect('/sigin')
+
+
+def fution(request):
+    if request.method == 'POST':
+        firstname = request.POST['firstname']
+        lastname = request.POST['lastname']
+        country = request.POST['country']
+        title = request.POST['title']
+        phone = request.POST['phone']
+        initials = f"{firstname[:2]}{lastname[:2].upper()}{country[:2]}{title[:2]}{phone[3:6]}"
+        print(initials)
+        return render(request, 'pages/futionpage.html', {'initials': initials})
+
+    return render(request, 'pages/futionpage.html')
